@@ -143,4 +143,36 @@
               (fn-for-natural num 1)))
 
 ;; using num->digits function
-;; (foldl + 0 (num->digits (factorial 100))) ; answer         
+;; (foldl + 0 (num->digits (factorial 100))) ; answer
+
+;; ===========================================================
+;; PROBLEM:
+;; Design a function with returns the k-th element of a list
+;; ===========================================================
+
+;; (listof X) Natural -> X
+(define (kth-from-list lox k)
+  (cond [(empty? lox) (error "no items at that index")]
+        [else
+         (if (= 1 k)
+             (first lox)
+             (kth-from-list (rest lox) (sub1 k)))]))
+
+;; ===========================================================
+;; PROBLEM:
+;; Remove duplicate elements in a list of Strings
+;; ===========================================================
+
+;; (listof String) -> (listof String)
+(define (rm-duplicates los0)
+  ;; result is type: (listof String), interp. the resulting list
+  ;; prev is type: String, interp. the previous string
+  (local [(define (fn-for-los los result prev)
+            (cond [(empty? los) result]
+                  [else
+                   (fn-for-los (rest los) (if (not (string=? (first los) prev))
+                                              (append result (list (first los)))
+                                              result)
+                               (first los))]))]
+    (fn-for-los (rest los0) empty (first los0))))
+            
