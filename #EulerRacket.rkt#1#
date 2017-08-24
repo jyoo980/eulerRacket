@@ -271,11 +271,11 @@
  #";; about the language level of this file in a form that our tools ca"
  #"n easily process."
 ) 0 0 4 29 1 #"\n"
-0 0 4 3 181
+0 0 4 3 184
 (
- #"#reader(lib \"htdp-advanced-reader.ss\" \"lang\")((modname EulerRack"
- #"et) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t con"
- #"structor repeating-decimal #f #t none #f () #t)))"
+ #"#reader(lib \"htdp-advanced-reader.ss\" \"lang\")((modname |#EulerRa"
+ #"cket|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t "
+ #"constructor repeating-decimal #f #t none #f () #t)))"
 ) 0 0 4 29 1 #"\n"
 0 0 24 3 1 #"("
 0 0 15 3 7 #"require"
@@ -1172,7 +1172,7 @@
 0 0 24 3 1 #" "
 0 0 14 3 3 #"its"
 0 0 24 3 1 #" "
-0 0 14 3 6 #"digits"
+0 0 14 3 7 #"digits."
 0 0 24 3 1 #" "
 0           0 0 0 24 29 1 #"\n"
 0 0 24 29 1 #"\n"
