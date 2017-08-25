@@ -258,7 +258,7 @@
 
 (define (prime? integer0)
   (local [(define (trial-div integer factors)
-            (cond [(= integer 1) false]
+            (cond [(or (= integer 1) (= integer 0)) false]
                   [(empty? factors) true]
                   [else
                    (if (= (modulo integer (first factors)) 0)
@@ -267,9 +267,23 @@
           
           (define (factor-list num)
             (local [(define (fn-for-natural start end result)
-                      (cond [(= start (add1 end)) result]
+                      (cond [(zero? num) empty]
+                            [(= start (add1 end)) result]
                             [else
                              (fn-for-natural (add1 start) end (append result (list start)))]))]
               (fn-for-natural 2 (floor (sqrt num)) empty)))]
     (trial-div integer0 (factor-list integer0))))  
+
+;; =========================================================================
+;; PROBLEM:
+;; Write a function generates a list of the first n prime numbers
+;; =========================================================================
+
+;; Natural -> (listof Natural)
+;; generates the first n prime numbers
+(check-expect (get-primes 10) (list 2 3 5 7))
+(check-expect (get-primes 20) (list 2 3 5 7 11 13 17 19))
+
+(define (get-primes n)
+  (filter prime? (build-list (add1 n) identity)))
 
