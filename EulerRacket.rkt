@@ -16,8 +16,6 @@
          (filter (λ(n)(or (= (modulo n 3) 0)(= (modulo n 5) 0)))
                  (build-list (add1 n) identity))))
 
-; (sum-3-5 1000)     ; answer
-
 ;; ===============================================================
 ;; PROBLEM:
 ;; Find the difference between the sum of the squares of the first  
@@ -276,7 +274,7 @@
 
 ;; =========================================================================
 ;; PROBLEM:
-;; Write a function generates a list of the first n prime numbers
+;; Write a function that generates a list of the first n prime numbers
 ;; =========================================================================
 
 ;; Natural -> (listof Natural)
@@ -287,3 +285,33 @@
 (define (get-primes n)
   (filter prime? (build-list (add1 n) identity)))
 
+;; =========================================================================
+;; PROBLEM:
+;; Write a function which determines whether two words are anagrams of each
+;; other. No duplicate letters may be included
+;; =========================================================================
+
+;; String String -> Boolean
+;; produce true if two strings are anagrams of one another, else false
+(check-expect (anagram? "tommarvoloriddle" "iamlordvoldemort") true)
+(check-expect (anagram? "john" "cena") false)
+
+(define (anagram? str0 str1)
+  (local [(define (check-all-los los0 str)
+            (cond [(empty? los0) true]
+                  [else
+                   (if (string-contains? (first los0) str)
+                       (check-all-los (rest los0) str)
+                       false)]))
+                                     
+          (define (string->los str)
+            (local [(define (fn-for-string str start end result)
+                      (cond [(= end (add1 (string-length str))) result]
+                            [else
+                             (fn-for-string str (add1 start) (add1 end)
+                                            (append result (list (substring str start end))))]))]
+              (fn-for-string str 0 1 empty)))]
+    (check-all-los (string->los str0) str1)))
+    
+  
+          
