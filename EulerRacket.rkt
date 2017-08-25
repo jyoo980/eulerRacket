@@ -280,7 +280,7 @@
 ;; =========================================================================
 
 ;; Natural -> (listof Natural)
-;; generates the first n prime numbers
+;; generates a list of prime numbers up to a given n
 (check-expect (get-primes 10) (list 2 3 5 7))
 (check-expect (get-primes 20) (list 2 3 5 7 11 13 17 19))
 
