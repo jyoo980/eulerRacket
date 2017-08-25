@@ -135,12 +135,12 @@
 ;; ===========================================================
 
 (define (factorial num)
-            ;; result is type: Natural, interp. the factorial
-            (local [(define (fn-for-natural n result)
-                      (cond [(zero? n) result]
-                            [else
-                             (fn-for-natural (sub1 n) (* n result))]))]
-              (fn-for-natural num 1)))
+  ;; result is type: Natural, interp. the factorial
+  (local [(define (fn-for-natural n result)
+            (cond [(zero? n) result]
+                  [else
+                   (fn-for-natural (sub1 n) (* n result))]))]
+    (fn-for-natural num 1)))
 
 ;; using num->digits function
 ;; (foldl + 0 (num->digits (factorial 100))) ; answer
@@ -214,4 +214,29 @@
                        (fn-for-lox (rest original) (rest reversed))
                        false)]))]
     (fn-for-lox lox0 (reverse lox0))))
-                     
+
+
+;; ===============================================================
+;; PROBLEM:
+;; Write a function which consumes a String and returns true if it is
+;; a palindrome, i.e. reads the same back and forth
+;; ===============================================================
+
+;; String -> Boolean
+;; consume str, return true if it is a palindrome, else false
+(check-expect (string-pdrom? "bob") true)
+(check-expect (string-pdrom? "hannah") true)
+(check-expect (string-pdrom? "john") false)
+
+(define (string-pdrom? str1)
+  (local [(define (fn-for-string str)
+            (pdrome? (string-array str)))
+          
+          (define (string-array str0)
+            (local [(define (fn-for-str str start end)
+                      (cond [(= end (add1 (string-length str))) empty]
+                            [else
+                             (cons (substring str start end)
+                                   (fn-for-str str (add1 start) (add1 end)))]))]
+              (fn-for-str str0 0 1)))]
+    (fn-for-string str1)))
