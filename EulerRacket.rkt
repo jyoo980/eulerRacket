@@ -175,4 +175,43 @@
                                               result)
                                (first los))]))]
     (fn-for-los (rest los0) empty (first los0))))
-            
+
+;; =========================================================
+;; PROBLEM:
+;; Replicate the elements of a list a given number of times.
+;; ===========================================================
+
+(define (duplicate-n lox0 num)
+  ;; count is type: Natural, interp, the number of times that each element will be duplicated
+  ;; result is type; (listof X), the resulting list with duplicates
+  (local [(define (fn-for-lox lox count result)
+            (cond [(empty? lox) result]
+                  [else
+                   (if (zero? count)
+                       (fn-for-lox (rest lox) num result)
+                       (fn-for-lox lox (sub1 count) (append result (list (first lox)))))]))]
+    (fn-for-lox lox0 num empty)))
+
+;; ===============================================================
+;; PROBLEM:
+;; Write a function which consumes a list and returns true if it is
+;; a palindrome, i.e. reads the same back and forth
+;; ===============================================================
+
+;; (listof X) -> Boolean
+;; consume lox, return true if lox is a palindromic list, else false
+(check-expect (pdrome? (list 1 2 3 2 1)) true)
+(check-expect (pdrome? (list 1 2 2 1)) true)
+(check-expect (pdrome? (list 1 3 3 1 4)) false)
+(check-expect (pdrome? empty) true)
+
+(define (pdrome? lox0)
+  ;; reversed is type: (listof X), interp. the original list reversed
+  (local [(define (fn-for-lox original reversed)
+            (cond [(empty? original) true]
+                  [else
+                   (if (equal? (first original) (first reversed))
+                       (fn-for-lox (rest original) (rest reversed))
+                       false)]))]
+    (fn-for-lox lox0 (reverse lox0))))
+                     
