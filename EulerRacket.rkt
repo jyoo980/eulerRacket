@@ -214,12 +214,15 @@
                        (fn-for-lox (rest original) (rest reversed))
                        false)]))]
     (fn-for-lox lox0 (reverse lox0))))
-
+;
+;A simpler implementation
+;(define  (pdrome? lox)
+;  (equal? lox (reverse lox)))
 
 ;; ===============================================================
 ;; PROBLEM:
-;; Write a function which consumes a String and returns true if it is
-;; a palindrome, i.e. reads the same back and forth
+;; Write a function which consumes a String and returns true if it
+;; is a palindrome, i.e. reads the same back and forth
 ;; ===============================================================
 
 ;; String -> Boolean
@@ -240,3 +243,33 @@
                                    (fn-for-str str (add1 start) (add1 end)))]))]
               (fn-for-str str0 0 1)))]
     (fn-for-string str1)))
+
+
+;; =========================================================================
+;; PROBLEM:
+;; Write a function which determines whether a given integer is prime or not
+;; =========================================================================
+
+;; Integer -> Boolean
+;; consumes integer n, returns true iff the Integer is a prime
+(check-expect (prime? 17) true)
+(check-expect (prime? 1) false)
+(check-expect (prime? 12) false)
+
+(define (prime? integer0)
+  (local [(define (trial-div integer factors)
+            (cond [(= integer 1) false]
+                  [(empty? factors) true]
+                  [else
+                   (if (= (modulo integer (first factors)) 0)
+                       false
+                       (trial-div integer (rest factors)))]))
+          
+          (define (factor-list num)
+            (local [(define (fn-for-natural start end result)
+                      (cond [(= start (add1 end)) result]
+                            [else
+                             (fn-for-natural (add1 start) end (append result (list start)))]))]
+              (fn-for-natural 2 (floor (sqrt num)) empty)))]
+    (trial-div integer0 (factor-list integer0))))  
+
