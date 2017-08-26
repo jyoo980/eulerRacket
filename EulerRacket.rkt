@@ -312,6 +312,6 @@
                                             (append result (list (substring str start end))))]))]
               (fn-for-string str 0 1 empty)))]
     (check-all-los (string->los str0) str1)))
-    
+
   
           
