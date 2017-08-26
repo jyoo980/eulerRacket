@@ -12,3 +12,6 @@ I have solved a variety of common problems which manipulate data structures or l
 * Naive primality algorithms
 * Anagram checks for strings
 
+Click [here](https://projecteuler.net/) to see the entire list of Project Euler problems, or [here](http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html) to peruse problems posed for Commmon Lisp.
+
+
