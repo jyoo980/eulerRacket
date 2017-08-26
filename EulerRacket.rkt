@@ -313,5 +313,76 @@
               (fn-for-string str 0 1 empty)))]
     (check-all-los (string->los str0) str1)))
 
-  
+;; ===============================================================
+;; PROBLEM:
+;; Provide implementations for the following first-order functions
+;;     - map
+;;     - filter
+;;     - fold (tail and non tail-recursive)
+;;     - andmap
+;;     - ormap
+;; ===============================================================
+
+;; (X -> Y) (listof X) -> (listof Y)
+;; the common map function, called "transform_all" here
+
+(define (transform_all fn lox0)
+  (local [(define (fn-for-lox lox fn result_list)
+            (cond [(empty? lox) result_list]
+                  [else
+                   (fn-for-lox (rest lox) fn
+                               (append result_list (list (fn (first lox)))))]))]
+    (fn-for-lox lox0 fn empty)))
+
+;; (X -> Boolean) (listof X) - > (listof X)
+;; common filter function, called "satisfy" here
+
+(define (satisfy pred? lox0)
+  (local [(define (fn-for-lox pred lox result_list)
+            (cond [(empty? lox) result_list]
+                  [else
+                   (fn-for-lox pred (rest lox) (update-result pred result_list (first lox)))]))
+          (define (update-result pred lox x)
+            (if (pred x) (append lox (list x)) lox))]
+    (fn-for-lox pred? lox0 empty)))
+
+;; (X Y -> Y) Y (listof X) -> (listof Y)
+;; non tail-recursive fold, called "fold_right"
+
+(define (fold_right fn b lox)
+  (cond [(empty? lox) b]
+        [else
+         (fn (first lox)
+             (fold_right fn b (rest lox)))]))
+
+;; tail-recursive fold, called "fold_left"
+(define (fold_left fn b lox0)
+  (local [(define (fn-for-lox fn b lox result)
+            (cond [(empty? lox) result]
+                  [else
+                   (fn-for-lox fn b (rest lox) (fn (first lox) result))]))]
+    (fn-for-lox fn b lox0 b)))
+
+;; (X -> Boolean) (listof X) -> Boolean
+;; return true iff all elements satisfy the predicate
+
+(define (all_true? pred? lox0)
+  (local [(define (fn-for-lox lox pred result)
+            (cond [(empty? lox) result]
+                  [else
+                   (fn-for-lox (rest lox) pred (and (first lox) result))]))]
+    (fn-for-lox lox0 pred? true)))
+
+;; (X -> Boolean) (listof X) -> Boolean
+;; return true if at least one of the elements satisfy the predicate
+
+(define (one_true? pred? lox0)
+  (local [(define (fn-for-lox lox pred result)
+            (cond [(empty? lox) result]
+                  [else
+                   (fn-for-lox (rest lox) pred (or (first lox) result))]))]
+    (fn-for-lox lox0 pred? false)))
+ 
+                            
+
           
