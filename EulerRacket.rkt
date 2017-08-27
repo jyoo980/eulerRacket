@@ -382,7 +382,23 @@
                   [else
                    (fn-for-lox (rest lox) pred (or (first lox) result))]))]
     (fn-for-lox lox0 pred? false)))
- 
-                            
+
+;; ================================================================
+;; PROBLEM:
+;; Provide an implementation of a function which consumes two lists
+;; and produces their set intersection, write a version using
+;; member? and write a verion without
+;; ================================================================
+
+(define (intersection lox0 lox1)
+  (local [(define intersc empty)
+          (define (fn-for-lox loxa loxb)
+            (cond [(or (empty? loxa) (empty? loxb)) empty]
+                  [else
+                   (if (member? (first loxa) loxb)
+                       (fn-for-lox (rest loxa) loxb (cons (first loxa) intersc))
+                       (fn-for-lox (rest loxa) loxb intersec))]))]
+    (fn-for-lox lox0 lox1 empty)))
+            
 
           
