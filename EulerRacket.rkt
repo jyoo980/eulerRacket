@@ -10,9 +10,12 @@
 
 ;; Natural -> Natural
 ;; determines sum of the multiples of 3 or 5 below given n
+(check-expect (sum-3-5 0) 0)
+(check-expect (sum-3-5 10) (+ 3 5 6 9))
+(check-expect (sum-3-5 20) (+ 3 5 6 10 9 12 15 18))
 
 (define (sum-3-5 n)
-  (foldl + 0
+  (foldl + (- 0 n)
          (filter (λ(n)(or (= (modulo n 3) 0)(= (modulo n 5) 0)))
                  (build-list (add1 n) identity))))
 
@@ -41,6 +44,9 @@
 
 ;; (listof X) -> (listof X)
 ;; reverses list passed in
+(check-expect (reverse-lox empty) empty)
+(check-expect (reverse-lox (list 1)) (list 1))
+(check-expect (reverse-lox (list 1 2 3 4)) (list 4 3 2 1))
 
 (define (reverse-lox lox0)
   ;; reversed is type: lox
@@ -53,11 +59,16 @@
 
 ;; ===========================================================
 ;; PROBLEM:
-;; write a function whcih interleaves 2 lists.
+;; write a function which interleaves 2 lists.
 ;; ===========================================================
 
 ;; (listof X) (listof X) -> (listof X)
 ;; creates a new list by taking elements interchangably from 2 lists
+(check-expect (interleave empty empty) empty)
+(check-expect (interleave (list 1) empty) (list 1))
+(check-expect (interleave empty (list 2)) (list 2))
+(check-expect (interleave (list 1 2) (list "a" "b" "c" "d")) (list 1 "a" 2 "b" "c" "d"))
+(check-expect (interleave (list "a" "b" "c" "d") (list 1 2)) (list "a" 1 "b" 2 "c" "d"))
 
 (define (interleave lox1_0 lox2_0)
   ;; select is type: boolean
@@ -79,18 +90,28 @@
 ;; ===========================================================================
 ;; (X -> Y) (listof X) -> (listof Y)
 ;; this is basically a map function, made it tail-recursive for runtime
+(check-expect (on_all add1 empty) empty)
+(check-expect (on_all add1 (list 0 1 2)) (list 1 2 3))
+(check-expect (on_all odd? (list 1 2 3 4)) (list true false true false))
+(check-expect (on_all (λ(s)(string-append s "s")) (list "apple" "no" "yep"))
+              (list "apples" "nos" "yeps"))
+
 (define (on_all fn lox0)
   ;; result is type: (listof Y)
   (local [(define (fn-for-lox fn lox result)
             (cond [(empty? lox) result]
                   [else
-                   (fn-for-lox fn (rest lox) (append (list (fn (first lox))) result))]))]
+                   (fn-for-lox fn (rest lox) (append result (list (fn (first lox)))))]))]
     (fn-for-lox fn lox0 empty)))
 
 ;; ===========================================================================================
 ;; PROBLEM:
 ;; Write a function which returns the largest element of a list. Assume the list is non-empty
 ;; ===========================================================================================
+
+;; (listof Natural) -> Natural
+(check-expect (list-max (list 1 2)) 2)
+(check-expect (list-max (list 1 2 -4 -4 24 5 -3 0)) 24)
 
 (define (list-max lon0)
   ;; max is type: Number, interp. largest number seen in list so far
@@ -105,6 +126,10 @@
 ;;  Write a function which returns the list of the first 100 fibonacci numbers 
 ;; ===========================================================================
 
+;; Natural -> (listof Natural)
+(check-expect (fib 0) 0)
+(check-expect (fib 3) 2)
+
 (define (fib n)
   (local [(define (fn-for-natural prev2 prev1 index)
             (cond [(= index 0) prev2]
@@ -114,10 +139,15 @@
 
 ;; (build-list (add1 100) fib) ; tail-recursive answer
 
-;; ===========================================================
+;; =================================================================
 ;; PROBLEM:
 ;; Write a function consumes a number, returns a list of its digits. 
-;; ===========================================================
+;; =================================================================
+
+;; Natural -> (listof Natural)
+(check-expect (num->digits 0) (list 0))
+(check-expect (num->digits 123) (list 1 2 3))
+(check-expect (num->digits 24423243) (list 2 4 4 2 3 2 4 3))
 
 (define (num->digits n0)
   (local [(define (inner-helper str len start end)
@@ -131,6 +161,9 @@
 ;; PROBLEM:
 ;; Find the sum of the digits in the number 100!  
 ;; ===========================================================
+(check-expect (factorial 0) 1)
+(check-expect (factorial 10) (* 10 9 8 7 6 5 4 3 2 1))
+(check-expect (factorial 100) (foldl * 1 (remove 0 (build-list 101 identity))))
 
 (define (factorial num)
   ;; result is type: Natural, interp. the factorial
@@ -142,12 +175,14 @@
 
 ;; using num->digits function
 ;; (foldl + 0 (num->digits (factorial 100))) ; answer
+;; built-in methods
+;; (foldl * 1 (remove 0 (build-list 101 identity))))
 
 ;; ===========================================================
 ;; PROBLEM:
 ;; Design a function with returns the k-th element of a list
 ;; ===========================================================
-
+ 
 ;; (listof X) Natural -> X
 (define (kth-from-list lox k)
   (cond [(empty? lox) (error "no items at that index")]
@@ -160,6 +195,7 @@
 ;; PROBLEM:
 ;; Remove duplicate elements in a list of Strings
 ;; ===========================================================
+(check-expect (rm-duplicates (list "a" "a" "b" "c" "c" "c" "c" "cc" "d")) (list  "b" "c" "cc" "d"))
 
 ;; (listof String) -> (listof String)
 (define (rm-duplicates los0)
@@ -386,19 +422,17 @@
 ;; ================================================================
 ;; PROBLEM:
 ;; Provide an implementation of a function which consumes two lists
-;; and produces their set intersection, write a version using
-;; member? and write a verion without
-;; ================================================================
+;; and produces their set intersection
 
 (define (intersection lox0 lox1)
-  (local [(define intersc empty)
-          (define (fn-for-lox loxa loxb)
+  (local [(define (fn-for-lox loxa loxb intersc)
             (cond [(or (empty? loxa) (empty? loxb)) empty]
                   [else
                    (if (member? (first loxa) loxb)
                        (fn-for-lox (rest loxa) loxb (cons (first loxa) intersc))
-                       (fn-for-lox (rest loxa) loxb intersec))]))]
+                       (fn-for-lox (rest loxa) loxb intersc))]))]
     (fn-for-lox lox0 lox1 empty)))
-            
+
+
 
           
