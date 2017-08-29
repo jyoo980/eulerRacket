@@ -466,9 +466,35 @@
                   [else
                    (fn-for-lox e (rest lox) (sub1 posn) (append new (first lox)))]))]
     (fn-for-lox e0 lox0 posn0 empty)))
+
+;; ======================================================================
+;; PROBLEM:
+;; Design a function which consumes two strings and returns the number of
+;; identical characters starting from the first letter.
+;; ======================================================================
+
+;; String String -> Natural
+;; returns number of identical letters starting from str1 and str2
+(check-expect (same-char "apples" "") 0)
+(check-expect (same-char "" "apples") 0)
+(check-expect (same-char "apple" "apples") 5)
+(check-expect (same-char "john" "jonathan") 2)
+(check-expect (same-char "yes" "no") 0)
+
+(define (same-char str0 str1)
+  (local [(define (fn-for-los los0 los1 count)
+            (cond [(or (empty? los0) (empty? los1)) count]
+                  [else
+                   (if (not (equal? (first los0) (first los1)))
+                       count
+                       (fn-for-los (rest los0) (rest los1) (add1 count)))]))
           
-
-
-
-
-
+          (define (string->List str0)
+            ;; result is type: (listof String), interp. the string as list
+            (local [(define (fn-for-string str start end len result)
+                      (if (= end (add1 len))
+                          result
+                          (fn-for-string str (add1 start) (add1 end) len
+                                         (append result (list (substring str start end))))))]
+              (fn-for-string str0 0 1 (string-length str0) empty)))]
+    (fn-for-los (string->List str0) (string->List str1) 0)))
