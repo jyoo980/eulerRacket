@@ -480,6 +480,9 @@
 (check-expect (same-char "apple" "apples") 5)
 (check-expect (same-char "john" "jonathan") 2)
 (check-expect (same-char "yes" "no") 0)
+(check-expect (same-char "A" "a") 0)
+(check-expect (same-char "hello" "hello") 5)
+(check-expect (same-char "hello" "Hello") 0)
 
 (define (same-char str0 str1)
   (local [(define (fn-for-los los0 los1 count)
