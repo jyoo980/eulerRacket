@@ -445,16 +445,30 @@
   ;; second? is type: boolean, interp. true if at second element
   ;; sub_result is type: (listof X)
   (local [(define (fn-for-lox lox second? sub_result)
-          (cond [(empty? lox) sub_result]
-                [else
-                 (if (equal? second? true)
-                     (fn-for-lox (rest lox) false (append (list (first lox)) (list sub_result)))
-                     (fn-for-lox (rest lox) false sub_result))]))]
+            (cond [(empty? lox) sub_result]
+                  [else
+                   (if (equal? second? true)
+                       (fn-for-lox (rest lox) false (append (list (first lox)) (list sub_result)))
+                       (fn-for-lox (rest lox) false sub_result))]))]
     (fn-for-lox lox0 false empty)))
 
+;; ================================================================== 
+;; PROBLEM:
+;; Design a function which consumes a list, an element, and a posn.
+;; and returns a new list with the element inserted at that position
+;; ==================================================================
 
-
-
-
-
+(define (insert e0 lox0 posn0)
+  (local [(define (fn-for-lox e lox posn new)
+            (cond [(or (empty? lox) (= posn 1)) (if (empty? lox)
+                                                    (append new (list e))
+                                                    (append (append new (list e)) lox))]
+                  [else
+                   (fn-for-lox e (rest lox) (sub1 posn) (append new (first lox)))]))]
+    (fn-for-lox e0 lox0 posn0 empty)))
           
+
+
+
+
+
