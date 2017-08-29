@@ -423,6 +423,7 @@
 ;; PROBLEM:
 ;; Provide an implementation of a function which consumes two lists
 ;; and produces their set intersection
+;; ================================================================
 
 (define (intersection lox0 lox1)
   (local [(define (fn-for-lox loxa loxb intersc)
@@ -432,6 +433,27 @@
                        (fn-for-lox (rest loxa) loxb (cons (first loxa) intersc))
                        (fn-for-lox (rest loxa) loxb intersc))]))]
     (fn-for-lox lox0 lox1 empty)))
+
+;; ================================================================
+;; PROBLEM:
+;; Design a function which consumes a list and produces a list of
+;; their sublists. An example is shown below:
+;; (list a b c d e f) -> (list (a b) (c d) (e f))
+;; ================================================================
+
+(define (pair-elements lox0)
+  ;; second? is type: boolean, interp. true if at second element
+  ;; sub_result is type: (listof X)
+  (local [(define (fn-for-lox lox second? sub_result)
+          (cond [(empty? lox) sub_result]
+                [else
+                 (if (equal? second? true)
+                     (fn-for-lox (rest lox) false (append (list (first lox)) (list sub_result)))
+                     (fn-for-lox (rest lox) false sub_result))]))]
+    (fn-for-lox lox0 false empty)))
+
+
+
 
 
 
