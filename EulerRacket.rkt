@@ -713,3 +713,32 @@
                                 (cons (list (first a) (first b)) product))]))]
     (fn-for-sets A B empty)))
 
+;; ===================================================================================
+;; PROBLEM:
+;; Design a function which consumes a list, and packs elements into sublists of size 2
+;; you may assume that the list is at least of size 2 at the start
+;; ===================================================================================
+
+;; (listof X) -> (listof (listof X))
+;; packs elements into a new sublist of size 2
+(check-expect (pack! (list 1 2)) (list (list 1 2)))
+(check-expect (pack! (list 1 2 3 4)) (list (list 1 2) (list 3 4)))
+(check-expect (pack! (list 1 2 3 4 5 6)) (list (list 1 2) (list 3 4) (list 5 6)))
+                    
+(define (pack! lox)
+  (local [(define (fn-for-lox lox prev)
+            (cond [(empty? lox) empty]
+                  [else
+                   (cons (list prev (first lox))
+                         (fn-for-lox (rest lox) (first lox)))]))
+
+          (define (remove-duplicates lox2)
+            (local [(define (fn-for-lox2 lox count original)
+                      (cond [(empty? lox) original]
+                            [else
+                             (if (= (modulo count 2) 0)
+                                 (fn-for-lox2 (rest lox) (add1 count) (remove (first lox) original))
+                                 (fn-for-lox2 (rest lox) (add1 count) original))]))]
+              (fn-for-lox2 lox2 1 lox2)))]
+    (remove-duplicates (fn-for-lox (rest lox) (first lox)))))
+
