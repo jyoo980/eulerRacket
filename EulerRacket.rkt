@@ -501,3 +501,76 @@
                                          (append result (list (substring str start end))))))]
               (fn-for-string str0 0 1 (string-length str0) empty)))]
     (fn-for-los (string->List str0) (string->List str1) 0)))
+
+;; =======================================================
+;; PROBLEM:
+;; Do FizzBuzz in Racket - this is a fun and easy exercise
+;; =======================================================
+
+;; Natural -> (listof X)
+;; FizzBuzz implemented in Racket
+(check-expect (fizzbuzz 2) (list 1 2))
+(check-expect (fizzbuzz 5) (list 1 2 "fizz" 4 "buzz"))
+(check-expect (fizzbuzz 10) (list 1 2 "fizz" 4 "buzz" "fizz" 7 8 "fizz" "buzz"))
+
+(define (fizzbuzz n0)
+  (foldl
+   (λ(n ror)(cond [(and (= (modulo n 3) 0) (= (modulo n 5) 0)) (append ror (list "fizzbuzz"))]
+                  [(= (modulo n 3) 0) (append ror (list "fizz"))]
+                  [(= (modulo n 5) 0) (append ror (list "buzz"))]
+                  [else
+                   (append ror (list n))]))
+   empty
+   (remove 0 (build-list (add1 n0) identity))))
+
+#;
+(define (fizzbuzz n0)
+  (local [(define (fn-for-natural n result)
+            (cond [(zero?) result]
+                  [else
+                   (if ((and (= (modulo n 3) 0) (= (modulo n 5) 0)))
+                       (fn-for-natural (sub1 n) (append result (list "fizzbuzz")))
+                       (if (= (modulo n 3) 0)
+                           (fn-for-natural (sub1 n) (append result (list "fizz")))
+                           (fn-for-natural (sub1 n) (append result (list "buzz")))))]))]
+    (fn-for-natural n0 empty)))
+
+;; ===============================================
+;; PROBLEM:
+;; add up numbers in a list multiple ways
+;; ===============================================
+
+;; (listof Integer) -> Integer
+;; computes sum of integers in list
+(check-expect (sum empty) 0)
+(check-expect (sum (list 1)) 1)
+(check-expect (sum (list 1 2 3)) (+ 1 2 3))
+(check-expect (sum (list -4 2 1 4199 -3)) (+ -4 2 1 4199 -3))
+
+#;
+(define (sum lon)
+  (foldl + 0 lon))    ;; One liner
+
+#;
+(define (sum lon)
+  (cond [(empty? lon) 0]
+        [else
+         (+ (first lon)
+            (sum (rest lon)))]))    ;; classic
+
+#;
+(define (sum lon0)
+  (local [(define (fn-for-lon lon result)
+            (cond [(empty? lon) result]
+                  [else
+                   (fn-for-lon (rest lon) (+ result (first lon)))]))]  ;; making use of tail-recursion
+    (fn-for-lon lon0 0)))
+
+(define (sum lon0)
+  (local [(define sum 0)]
+    (begin
+      (for-each  (λ(n)(set! sum (+ n sum))) lon0)
+      sum)))
+
+
+
