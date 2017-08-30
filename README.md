@@ -9,7 +9,8 @@ I have solved a variety of common problems which manipulate data structures or l
     * interleave
     * implementations of map, fold, filter, and other first-order functions
     * removal of duplicate elements
-    * retrieval of the kth element of a list 
+    * retrieval of the kth element of a list
+    * the sublist-packing problem
 * Naive primality algorithms
 * Anagram checks for strings
 * Palindrome checks for strings and lists
