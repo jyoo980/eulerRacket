@@ -2,6 +2,7 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-advanced-reader.ss" "lang")((modname EulerRacket) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #t)))
 (require racket/math)
+(require racket/base)
 
 ;; =======================================================
 ;; PROBLEM:
@@ -84,6 +85,29 @@
 
 ;; This is a naive, non tail-recursive approach.
 
+
+
+;; ==============================================================================
+;; PROBLEM:
+;; Write a function which consume a list and a number, n, skips every nth element
+;; ==============================================================================
+
+;; (listof X) Natural -> (listof X)
+(check-expect (skip-n empty 4) empty)
+(check-expect (skip-n (list 1 2) 4) (list 1 2))
+(check-expect (skip-n (list 1 2 3 4 5) 2) (list 1 3 5))
+(check-expect (skip-n (list 1 2 3 4 5) 3) (list 1 2 4 5))
+
+(define (skip-n lon0 n0)
+  (local [(define (fn-for-lon lon count result)
+            (cond [(empty? lon) result]
+                  [else
+                   (if (= count 1)
+                       (fn-for-lon (rest lon) n0 result)
+                       (fn-for-lon (rest lon) (sub1 count) (append result (list (first lon)))))]))]
+    (fn-for-lon lon0 n0 empty)))            
+
+
 ;; ===========================================================================
 ;; PROBLEM:
 ;; Write a function: on_all that applies a function to every element of a list
@@ -120,6 +144,32 @@
                   [else
                    (fn-for-lon (rest lon) (if (> (first lon) max) (first lon) max))]))]
     (fn-for-lon (rest lon0) (first lon0))))
+
+;; ===========================================================================================
+;; PROBLEM:
+;; Write a function which computes the average of a list
+;; ===========================================================================================
+
+;; (listof Integer) -> Number
+(check-expect (average empty) 0)
+(check-expect (average (list 1)) 1)
+(check-expect (average (list 1 -3 0 1)) (/ (+ 1 -3 0 1) 4))
+
+;; Tail-recursive solution
+#;
+(define (average lon0)
+  (local [(define (fn-for-lon lon count sum)
+            (cond [(empty? lon) (if (zero? sum) 0 (/ sum count))]
+                  [else
+                   (fn-for-lon (rest lon) (add1 count) (+ (first lon) sum))]))]
+    (fn-for-lon lon0 0 0)))
+
+(define (average lon)
+  (local [(define count 0) (define sum 0)]
+    (begin
+      (for-each (λ(n)(begin (set! count (add1 count)) (set! sum (+ sum n))))
+                lon)
+      (if (zero? count) 0 (/ sum count)))))
 
 ;; ===========================================================================
 ;;  PROBLEM:
@@ -165,6 +215,8 @@
 (check-expect (factorial 10) (* 10 9 8 7 6 5 4 3 2 1))
 (check-expect (factorial 100) (foldl * 1 (remove 0 (build-list 101 identity))))
 
+;; Tail-recursive version
+#;
 (define (factorial num)
   ;; result is type: Natural, interp. the factorial
   (local [(define (fn-for-natural n result)
@@ -172,6 +224,26 @@
                   [else
                    (fn-for-natural (sub1 n) (* n result))]))]
     (fn-for-natural num 1)))
+
+;; General-recursive version
+#;
+(define (factorial num)
+  (cond [(zero? num) 1]
+        [else
+         (* num (factorial (sub1 n)))]))
+
+;; Function-pointer version
+#;
+(define (factorial num)
+  (foldl * 1 (remove 0 (build-list (add1 num) identity))))
+
+;; Version using mutation
+(define (factorial n)
+  (local [(define product 1)]
+    (begin
+      (for-each (λ(n)(set! product (* n product)))
+                (remove 0 (build-list (add1 n) identity)))
+      product)))  
 
 ;; using num->digits function
 ;; (foldl + 0 (num->digits (factorial 100))) ; answer
@@ -433,6 +505,40 @@
                        (fn-for-lox (rest loxa) loxb (cons (first loxa) intersc))
                        (fn-for-lox (rest loxa) loxb intersc))]))]
     (fn-for-lox lox0 lox1 empty)))
+;; ===============================================
+;; PROBLEM:
+;; add up numbers in a list multiple ways
+;; ===============================================
+
+;; (listof Integer) -> Integer
+;; computes sum of integers in list
+(check-expect (sum empty) 0)
+(check-expect (sum (list 1)) 1)
+(check-expect (sum (list 1 2 3)) (+ 1 2 3))
+(check-expect (sum (list -4 2 1 4199 -3)) (+ -4 2 1 4199 -3))
+
+#;
+(define (sum lon)
+  (foldl + 0 lon))    ;; One liner
+#;
+(define (sum lon)
+  (cond [(empty? lon) 0]
+        [else
+         (+ (first lon)
+            (sum (rest lon)))]))    ;; classic
+#;
+(define (sum lon0)
+  (local [(define (fn-for-lon lon result)
+            (cond [(empty? lon) result]
+                  [else
+                   (fn-for-lon (rest lon) (+ result (first lon)))]))]  ;; making use of tail-recursion
+    (fn-for-lon lon0 0)))
+(define (sum lon0)
+  (local [(define sum 0)]
+    (begin
+      (for-each  (λ(n)(set! sum (+ n sum))) lon0)
+      sum)))
+
 
 ;; ================================================================
 ;; PROBLEM:
@@ -515,11 +621,11 @@
 
 (define (fizzbuzz n0)
   (foldl
-   (λ(n ror)(cond [(and (= (modulo n 3) 0) (= (modulo n 5) 0)) (append ror (list "fizzbuzz"))]
-                  [(= (modulo n 3) 0) (append ror (list "fizz"))]
-                  [(= (modulo n 5) 0) (append ror (list "buzz"))]
-                  [else
-                   (append ror (list n))]))
+   (λ (n ror)(cond [(and (= (modulo n 3) 0) (= (modulo n 5) 0)) (append ror (list "fizzbuzz"))]
+                   [(= (modulo n 3) 0) (append ror (list "fizz"))]
+                   [(= (modulo n 5) 0) (append ror (list "buzz"))]
+                   [else
+                    (append ror (list n))]))
    empty
    (remove 0 (build-list (add1 n0) identity))))
 
@@ -535,42 +641,75 @@
                            (fn-for-natural (sub1 n) (append result (list "buzz")))))]))]
     (fn-for-natural n0 empty)))
 
-;; ===============================================
+
+;; ==============================================================
 ;; PROBLEM:
-;; add up numbers in a list multiple ways
-;; ===============================================
+;; Design a function which computes the "difference" of two lists
+;; ==============================================================
 
-;; (listof Integer) -> Integer
-;; computes sum of integers in list
-(check-expect (sum empty) 0)
-(check-expect (sum (list 1)) 1)
-(check-expect (sum (list 1 2 3)) (+ 1 2 3))
-(check-expect (sum (list -4 2 1 4199 -3)) (+ -4 2 1 4199 -3))
+;; (listof X) (listof X) -> (listof X)
+(check-expect (diff empty empty) empty)
+(check-expect (diff (list 1 2) empty) (list 1 2))
+(check-expect (diff empty (list 1 2)) empty)
+(check-expect (diff (list 1 2) (list 2 3)) (list 1))
+(check-expect (diff (list 1 2 3 4) (list 4 3 2 1)) empty)
 
-#;
-(define (sum lon)
-  (foldl + 0 lon))    ;; One liner
-
-#;
-(define (sum lon)
-  (cond [(empty? lon) 0]
+(define (diff lox0 lox1)
+  (cond [(empty? lox0) empty]
+        [(empty? lox1) lox0]
         [else
-         (+ (first lon)
-            (sum (rest lon)))]))    ;; classic
+         (if (member? (first lox1) lox0)
+             (diff (remove (first lox1) lox0) (rest lox1))
+             (diff lox0 (rest lox1)))]))
 
-#;
-(define (sum lon0)
-  (local [(define (fn-for-lon lon result)
-            (cond [(empty? lon) result]
+;; =================================================================
+;; PROBLEM:
+;; Design a function which computes the set compliment of two lists
+;; =================================================================
+
+;; (listof X) (listof X) -> (listof X)
+(check-expect (comp empty empty) empty)
+(check-expect (comp (list 1) (list 1)) empty)
+(check-expect (comp (list 1 2) (list 2 1 4)) empty)
+(check-expect (comp (list 2 1 4) (list 1 2)) (list 4))
+(check-expect (comp empty (list 1 2)) empty)
+(check-expect (comp (list 1 2) empty) (list 1 2))
+
+(define (comp A B)
+  (local [(define (fn-for-sets a b compliment)
+            (cond [(empty? a) compliment]
                   [else
-                   (fn-for-lon (rest lon) (+ result (first lon)))]))]  ;; making use of tail-recursion
-    (fn-for-lon lon0 0)))
+                   (if (not (member? (first a) b))
+                       (fn-for-sets (rest a) b (append compliment (list (first a))))
+                       (fn-for-sets (rest a) b compliment))]))]
+    (fn-for-sets A B empty)))
 
-(define (sum lon0)
-  (local [(define sum 0)]
-    (begin
-      (for-each  (λ(n)(set! sum (+ n sum))) lon0)
-      sum)))
+;; ===================================================================
+;; PROBLEM:
+;; Design a function which computes the cartesian product of two lists
+;; ===================================================================
 
+;; (listof X) (listof X) -> (listof X)
+;; computes cartesian product of two lists of equal size
+(check-expect (cartesian empty empty) empty)
+(check-expect (cartesian (list 1 2) (list 3 4)) (list (list 1 3) (list 2 4)))
+(check-expect (cartesian (list "a" "b" "c") (list 1 2 3))
+              (list (list "a" 1) (list "b" 2) (list "c" 3)))
 
+;; General recursive solution
+#;
+(define (cartesian A B)
+  (cond [(or (empty? A) (empty? B)) empty]
+        [else
+         (cons (list (first A) (first B))
+               (cartesian (rest A) (rest B)))]))
+
+(define (cartesian A B)
+  ;; product is type: (listof (listof X)), interp. the cartesian product of A,B
+  (local [(define (fn-for-sets a b product)
+            (cond [(or (empty? a) (empty? b)) (reverse product)]
+                  [else
+                   (fn-for-sets (rest a) (rest b)
+                                (cons (list (first a) (first b)) product))]))]
+    (fn-for-sets A B empty)))
 
