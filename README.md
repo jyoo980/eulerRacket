@@ -17,7 +17,7 @@ I have solved a variety of common problems which manipulate data structures or l
   * intersection
   * difference
   * compliment
-
+  * cartesian product
 
 
 Below, you can see an example of the syntax of Racket, and a problem I have solved using it. Take a look!
