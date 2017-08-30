@@ -13,7 +13,11 @@ I have solved a variety of common problems which manipulate data structures or l
 * Naive primality algorithms
 * Anagram checks for strings
 * Palindrome checks for strings and lists
-* Set intersection functions 
+* Set operations
+  * intersection
+  * difference
+  * compliment
+
 
 
 Below, you can see an example of the syntax of Racket, and a problem I have solved using it. Take a look!
