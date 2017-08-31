@@ -742,9 +742,24 @@
               (fn-for-lox2 lox2 1 lox2)))]
     (remove-duplicates (fn-for-lox (rest lox) (first lox)))))
 
+;; ===================================================================================
+;; PROBLEM:
+;; Design a function which does the following
+;; (list 1 2 3 4)     -> (list 2 1 4 3)
+;; (list 1 2 3 4 5 6) -> (list 2 1 3 4 6 5)
+;; ===================================================================================
 
+(define (reverse-sublists lox)
+  (local [(define (reverse-pack! lox)
+            (cond [(empty? lox) empty]
+                  [else
+                   (cons (reverse (first lox))
+                         (reverse-pack! (rest lox)))]))
 
-
-
-
-
+          (define (list-all lox)
+            (cond [(empty? lox) empty]
+                  [else
+                   (append (first lox)
+                           (list-all (rest lox)))]))]
+    (list-all (reverse-pack! (pack! lox)))))
+          
