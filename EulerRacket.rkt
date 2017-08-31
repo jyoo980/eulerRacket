@@ -762,4 +762,18 @@
                    (append (first lox)
                            (list-all (rest lox)))]))]
     (list-all (reverse-pack! (pack! lox)))))
-          
+
+;; ==================
+;; PROBLEM:
+;; Ackermann function
+;; ==================
+
+(define (ackm m n)
+  (cond [(zero? m) (add1 n)]
+        [(zero? n) (ackm (sub1 m) 1)]
+        [else
+         (ackm (sub1 m) (ackm m (sub1 n)))]))
+
+
+
+
