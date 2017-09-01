@@ -171,6 +171,39 @@
                 lon)
       (if (zero? count) 0 (/ sum count)))))
 
+
+;; ===========================================================================
+;;  PROBLEM:
+;;  Write a function which checks for list equality
+;; ===========================================================================
+
+;; (listof X) (listof X) -> Boolean
+(check-expect (list-equal? empty empty) true)
+(check-expect (list-equal? (list 1) empty) false)
+(check-expect (list-equal? empty (list 1)) false)
+(check-expect (list-equal? (list 1 2 4) (list 1 2 4)) true)
+(check-expect (list-equal? (list 1 2 4) (list 1 2 3)) false)
+(check-expect (list-equal? (list 4 2 3) (list 1 2 3)) false)
+
+;; Method 1 - Tail-recursion
+#;
+(define (list-equal? lon0 lon1)
+  (cond [(and (empty? lon0) (empty? lon1)) true]
+        [(or (empty? lon0) (empty? lon1)) false]
+        [else
+         (if (equal? (first lon0) (first lon1))
+             (list-equal? (rest lon0) (rest lon1))
+             false)]))
+
+;;; Method 2 - Mutation
+;(define (list-equal? lox0 lox1)
+;  (local [(define isEqual false)]
+;    (if (not (= (length lox0) (length lox1)))
+;        false
+;        (begin
+;          (for-each (λ(a b)(set! isEqual (equal? a b))) lox0 lox1)
+;          isEqual))))
+
 ;; ===========================================================================
 ;;  PROBLEM:
 ;;  Write a function which returns the list of the first 100 fibonacci numbers 
