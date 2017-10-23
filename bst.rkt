@@ -57,4 +57,21 @@
   (cond [(false? bst) -1]
         [else
          (add1 (max (height (node-left bst))
-                    (height (node-right bst))))]))                       
+                    (height (node-right bst))))]))                      
+
+;; BST Natural -> String | False
+;; search for a node with the given key, if found, produce value, else false
+(check-expect (search BSTF 0) false)
+(check-expect (search BSTF 1) false)
+(check-expect (search BST1 1) "one")
+(check-expect (search BST0 3) "three")
+
+; (define (search bst key) false) ; stub
+
+;<template from Binary Search Tree>
+(define (search bst key)
+  (cond [(false? bst) false]
+        [(= key (node-key bst)) (node-value bst)]
+        [(< key (node-key bst)) (search (node-left bst) key)]
+        [(> key (node-key bst)) (search (node-right bst) key)]))
+
