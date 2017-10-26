@@ -3,7 +3,7 @@
 #reader(lib "htdp-advanced-reader.ss" "lang")((modname bst) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
 ;; bst.rkt - Binary Search Tree implementation in Racket
 
-(define-struct node(key val left right))
+(define-struct node(key val l1eft right))
 ;; BST is one of:
 ;; - false
 ;; - (make-node Integer String BST BST)
@@ -74,4 +74,11 @@
         [(= key (node-key bst)) (node-value bst)]
         [(< key (node-key bst)) (search (node-left bst) key)]
         [(> key (node-key bst)) (search (node-right bst) key)]))
+
+;; BST -> Natural
+;; consume bst, produce total sum of the keys in the BST, tail-recursively 
+(check-expect (total-keys BSTF) 0)
+(check-expect (total-keys BST1) 1)
+(check-expect (total-keys BST2) (+ 2 3))
+(check-expect (total-keys BST0) (+ 0 1 2 3))
 
