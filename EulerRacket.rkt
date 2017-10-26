@@ -807,6 +807,20 @@
         [else
          (ackm (sub1 m) (ackm m (sub1 n)))]))
 
+;; ===================================================================
+;; PROBLEM:
+;; Design a function which takes in a range of values, and an interval
+;; produces true iff all the values are in the interval, inclusive.
+;; ==================================================================
 
+;; (listof Number) Number Number -> Boolean
+;; true iff list contains numbers in interval given, inclusive
+(check-expect (in-range? (list 1) 0 5) true)
+(check-expect (in-range? (list 1 2 3) 0 4) true)
+(check-expect (in-range? (list -33 1 3) -32 4) false)
 
+; (define (in-range? lov bt tp) false) ; stub
 
+(define (in-range? lov bt tp)
+  (andmap (filter (lambda(val)(and (>= val bt)(<= val tp))) lov)))
+ 
