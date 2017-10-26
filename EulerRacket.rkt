@@ -822,5 +822,31 @@
 ; (define (in-range? lov bt tp) false) ; stub
 
 (define (in-range? lov bt tp)
-  (andmap (filter (lambda(val)(and (>= val bt)(<= val tp))) lov)))
+  (andmap (filter (lambda(val)(and (>= val bt)(<= val tp))))))
+
+;; ====================================================================
+;; PROBLEM:
+;; Design a function which takes in a list of numbers (list 1 2 3), and 
+;; produces its correspondig number value, e.g. (list 1 2 3) -> 321
+;; ====================================================================
+
+;; (listof Number) -> Number 
+;; convert list to number
+(check-expect (to->num (list 1)) 1)
+(check-expect (to->num (list 1 2)) 21)
+(check-expect (to->num (list 1 2 3)) 321)
+(check-expect (to->num (list 1 2 1)) 121)
+
+; (define (to->num lon) 0) ; stub
+
+(define (to->num lon)
+  (string->number (foldr string-append "" 
+    (foldl append empty 
+      (map (lambda (num)(number->string num)) lon)))))
  
+
+
+
+
+
+
