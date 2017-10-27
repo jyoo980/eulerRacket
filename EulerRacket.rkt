@@ -186,7 +186,7 @@
 (check-expect (list-equal? (list 4 2 3) (list 1 2 3)) false)
 
 ;; Method 1 - Tail-recursion
-#;
+
 (define (list-equal? lon0 lon1)
   (cond [(and (empty? lon0) (empty? lon1)) true]
         [(or (empty? lon0) (empty? lon1)) false]
@@ -822,12 +822,12 @@
 ; (define (in-range? lov bt tp) false) ; stub
 
 (define (in-range? lov bt tp)
-  (andmap (filter (lambda(val)(and (>= val bt)(<= val tp))))))
+  (andmap (lambda(val)(and (>= val bt)(<= val tp))) lov))
 
 ;; ====================================================================
 ;; PROBLEM:
 ;; Design a function which takes in a list of numbers (list 1 2 3), and 
-;; produces its correspondig number value, e.g. (list 1 2 3) -> 321
+;; produces its corresponding number value, e.g. (list 1 2 3) -> 321
 ;; ====================================================================
 
 ;; (listof Number) -> Number 
@@ -841,12 +841,65 @@
 
 (define (to->num lon)
   (string->number (foldr string-append "" 
-    (foldl append empty 
-      (map (lambda (num)(number->string num)) lon)))))
- 
+    (foldl (λ(s los) (append (list s) los)) empty 
+      (map (λ(num)(number->string num)) lon)))))
+
+;; (listof X) -> (listof (listof X))
+;; consume lox, produce list of suffixes
+(check-expect (suffixes (list "a" "b" "c" "d"))
+              (list (list "a" "b" "c" "d") (list "b" "c" "d")
+                    (list "c" "d") (list "d")))
+
+; (define (suffixes lox) empty) ; stub
+
+(define (suffixes lox)
+  (cond [(empty? lox) empty]
+        [else
+         (cons lox (suffixes (rest lox)))]))
 
 
+;; ====================================================================
+;; PROBLEM:
+;; Design a function which consumes a list of a list, then 
+;; produces the list "flattened", e.g. (list (list 1 2) (list 3 4)) ->
+;; (list 1 2 3 4)
+;; ====================================================================
 
+;; (listof (listof X)) -> (listof X)
+;; consume a list with sublists, produce a "flattened" list
+(check-expect (flatten empty) empty)
+(check-expect (flatten (list (list 1 2) (list 3 4) (list 5) (list 6))) (list 1 2 3 4 5 6))
+(check-expect (flatten (list (list 1) (list 2))) (list 1 2))
+(check-expect (flatten (list (list 1))) (list 1))
 
+; define (flatten lox) empty) ; stub
 
+;<Not tail-recursive>
+#;
+(define (flatten lox)
+  (cond [(empty? lox) empty]
+        [else
+         (append (first lox)
+                 (flatten (rest lox)))]))
 
+;<Tail-recursive solution>
+#;
+(define (flatten lox)
+  (local [(define (fn-for-lox lox flattened)
+            (cond [(empty? lox) flattened]
+                  [else
+                   (fn-for-lox (rest lox) (append flattened (first lox)))]))]
+    (fn-for-lox lox empty)))
+
+;<Using mutation>
+#;
+(define (flatten lox)
+  (local [(define flattened empty)]
+    (begin
+      (for-each (λ(x)(set! flattened (append flattened x))) lox)
+      flattened)))
+
+;<Using higher-order functions>
+#;
+(define (flatten lox)
+  (foldl (λ(x flattened)(append flattened x)) empty lox))
