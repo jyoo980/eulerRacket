@@ -900,6 +900,6 @@
       flattened)))
 
 ;<Using higher-order functions>
-#;
+
 (define (flatten lox)
   (foldl (λ(x flattened)(append flattened x)) empty lox))
