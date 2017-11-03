@@ -395,6 +395,7 @@
 (check-expect (prime? 1) false)
 (check-expect (prime? 12) false)
 
+#;
 (define (prime? integer0)
   (local [(define (trial-div integer factors)
             (cond [(or (= integer 1) (= integer 0)) false]
@@ -411,7 +412,14 @@
                             [else
                              (fn-for-natural (add1 start) end (append result (list start)))]))]
               (fn-for-natural 2 (floor (sqrt num)) empty)))]
-    (trial-div integer0 (factor-list integer0))))  
+    (trial-div integer0 (factor-list integer0))))
+
+;<Version using first-order functions, slower but more consise>
+#;
+(define (prime? n)
+  (and (not (zero? n)) (not (= n 1))
+       (andmap (λ(num)(not (zero? (modulo n num))))
+               (remove 0 (remove 1 (build-list n identity))))))
 
 ;; =========================================================================
 ;; PROBLEM:
