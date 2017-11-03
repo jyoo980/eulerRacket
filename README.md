@@ -1,6 +1,6 @@
 ## eulerRacket: beautiful functional programming ##
 
-I have solved a variety of common problems which manipulate data structures or leverage algorithms in Racket, a dialect of Scheme. The reason for using Racket is due to its simple syntax, relatively compact IDE, and its similarity to Common Lisp. Below are some of the functions I have implemented:
+I have solved a variety of common problems which manipulate data structures or leverage algorithms in Racket, a dialect of Scheme. The reason for using Racket is due to its simple syntax, relatively compact IDE, and my affinity toward the LISP family. Below are some of the functions I have implemented:
 
 * Prime number generation up to a given integer n (up to 100,000 confirmed)
 * Tail-recursive fibonacci sequence generation
