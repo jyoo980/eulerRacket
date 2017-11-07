@@ -18,7 +18,7 @@
 (define (sum-3-5 n)
   (foldl + (- 0 n)
          (filter (λ(n)(or (= (modulo n 3) 0)(= (modulo n 5) 0)))
-                 (build-list (add1 n) identity))))
+                 (build-list n add1))))
 
 ;; ===============================================================
 ;; PROBLEM:
