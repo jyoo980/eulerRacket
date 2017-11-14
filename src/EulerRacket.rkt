@@ -911,3 +911,34 @@
 
 (define (flatten lox)
   (foldl (λ(x flattened)(append flattened x)) empty lox))
+
+
+;; String -> String
+;; reverses the given String str
+(check-expect (reverse-string "") "")
+(check-expect (reverse-string " ") " ")
+(check-expect (reverse-string "a") "a")
+(check-expect (reverse-string "apple") "elppa")
+(check-expect (reverse-string "please reverse this")
+              "siht esrever esaelp")
+
+(define (reverse-string str0)
+  (local [(define (reverse-str str)
+            (cond [(s-empty? str) ""]
+                  [else
+                   (s-append (reverse-str (s-rest str))
+                             (s-first str))]))
+
+          (define (s-rest str)
+            (if (< (string-length str) 1)
+                ""
+                (substring str 1)))
+
+          (define (s-first str)
+            (if (< (string-length str) 1)
+                ""
+                (substring str 0 1)))
+
+          (define (s-empty? str) (string=? str ""))
+          (define (s-append str1 str2) (string-append str1 str2))]
+    (reverse-str str0)))
