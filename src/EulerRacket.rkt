@@ -942,3 +942,59 @@
           (define (s-empty? str) (string=? str ""))
           (define (s-append str1 str2) (string-append str1 str2))]
     (reverse-str str0)))
+
+
+;; ==========================================================================
+;; PROBLEM:
+;; Design a function which consumes (listof Natural), and produces the counts 
+;; odd/even numbers. You can represent this with a compound struct
+;; ==========================================================================
+
+(define-struct counter(odd even))
+;; Counter is (make-counter Natural Natural)
+;; interp. first field is the count of odd numbers
+;; interp. second field is the count of even numbers
+
+(define CT0 (make-counter 0 0))
+(define CT1 (make-counter 0 1))
+(define CT2 (make-counter 1 0))
+(define CT3 (make-counter 1 1))
+
+#;
+(define (fn-for-counter ct)
+  (... (counter-odd ct)
+       (counter-even ct)))
+
+
+;; (listof Natural) -> Counter
+;; consume lon, produce the number of odd/even numbers in the list
+(check-expect (count-odd/even empty) CT0)
+(check-expect (count-odd/even (list 1 2)) CT3)
+(check-expect (count-odd/even (list 1 2 3 4 5)) (make-counter 3 2))
+(check-expect (count-odd/even (list 2 4 6)) (make-counter 0 3))
+(check-expect (count-odd/even (list 1 3 5)) (make-counter 3 0))
+
+; (define (count-odd/even lon) (make-counter 0 0)); stub
+
+(define (count-odd/even lon0)
+  (local [(define (fn-for-lon lon ct)
+            (cond [(empty? lon) ct]
+                  [else
+                  (fn-for-lon (rest lon) (update-counter ct (first lon))])))
+
+          (define (update-counter ct n)
+            (if (zero? (modulo n 2))
+                (make-counter (counter-odd ct) (add1 (counter-even ct)))
+                (make-counter (add1 (counter-even ct)) (counter-odd ct))))]
+      (fn-for-lon lon0 (make-counter 0 0))))
+
+
+
+
+
+
+
+
+
+
+
