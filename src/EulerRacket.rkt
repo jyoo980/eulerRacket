@@ -395,7 +395,7 @@
 (check-expect (prime? 1) false)
 (check-expect (prime? 12) false)
 
-#;
+
 (define (prime? integer0)
   (local [(define (trial-div integer factors)
             (cond [(or (= integer 1) (= integer 0)) false]
@@ -965,14 +965,13 @@
   (... (counter-odd ct)
        (counter-even ct)))
 
-
 ;; (listof Natural) -> Counter
 ;; consume lon, produce the number of odd/even numbers in the list
-(check-expect (count-odd/even empty) CT0)
-(check-expect (count-odd/even (list 1 2)) CT3)
-(check-expect (count-odd/even (list 1 2 3 4 5)) (make-counter 3 2))
-(check-expect (count-odd/even (list 2 4 6)) (make-counter 0 3))
-(check-expect (count-odd/even (list 1 3 5)) (make-counter 3 0))
+;(check-expect (count-odd/even empty) CT0)
+;(check-expect (count-odd/even (list 1 2)) CT3)
+;(check-expect (count-odd/even (list 1 2 3 4 5)) (make-counter 3 2))
+;(check-expect (count-odd/even (list 2 4 6)) (make-counter 0 3))
+;(check-expect (count-odd/even (list 1 3 5)) (make-counter 3 0))
 
 ; (define (count-odd/even lon) (make-counter 0 0)); stub
 
@@ -980,7 +979,7 @@
   (local [(define (fn-for-lon lon ct)
             (cond [(empty? lon) ct]
                   [else
-                  (fn-for-lon (rest lon) (update-counter ct (first lon))])))
+                  (fn-for-lon (rest lon) (update-counter ct (first lon)))]))
 
           (define (update-counter ct n)
             (if (zero? (modulo n 2))
@@ -988,4 +987,19 @@
                 (make-counter (add1 (counter-even ct)) (counter-odd ct))))]
       (fn-for-lon lon0 (make-counter 0 0))))
 
+;; (listof Number) -> Natural
+;; produce the length of the longest sequence of numbers, assume non-empty list
+(check-expect (seq-len (list 1)) 1)
+(check-expect (seq-len (list 1 2 2 3)) 2)
+(check-expect (seq-len (list 1 2 3 3 3 3 4 5 6 6)) 4)
 
+; (define (seq-len lon) 0) ; stub
+
+(define (seq-len lon0)
+  (local [(define (fn-for-lon prev lon curr longest)
+            (cond [(empty? lon) longest]
+                  [else
+                   (if (not (= prev (first lon)))
+                       (fn-for-lon (first lon) (rest lon) 1 (max curr longest))
+                       (fn-for-lon (first lon) (rest lon) (add1 curr) longest))]))]
+    (fn-for-lon (first lon0) (rest lon0) 1 1)))
