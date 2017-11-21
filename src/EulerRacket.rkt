@@ -989,12 +989,3 @@
       (fn-for-lon lon0 (make-counter 0 0))))
 
 
-
-
-
-
-
-
-
-
-
