@@ -20,6 +20,7 @@ I have solved a variety of common problems which manipulate data structures or l
   * compliment
   * cartesian product
 * The Ackermann non primitive-recursive function
+* Quicksort
 
 Below, you can see an example of the syntax of Racket, and a problem I have solved using it. Take a look!
 
