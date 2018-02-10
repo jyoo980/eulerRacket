@@ -3,7 +3,7 @@
 #reader(lib "htdp-advanced-reader.ss" "lang")((modname bst) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
 ;; bst.rkt - Binary Search Tree implementation in Racket
 
-(define-struct node(key val left right))
+(define-struct node(key val l1eft right))
 ;; BST is one of:
 ;; - false
 ;; - (make-node Integer String BST BST)
@@ -71,46 +71,14 @@
 ;<template from Binary Search Tree>
 (define (search bst key)
   (cond [(false? bst) false]
-        [(= key (node-key bst)) (node-val bst)]
+        [(= key (node-key bst)) (node-value bst)]
         [(< key (node-key bst)) (search (node-left bst) key)]
         [(> key (node-key bst)) (search (node-right bst) key)]))
 
-;; BST Natural -> BST
-;; inserts natural n into the correct place in the BST
-(define (insert-into bst key)
-  (cond [(false? bst) (make-node key (number->string key) false false)]
-        [(= key (node-key bst)) bst]
-        [(<= key (node-key bst)) (make-node (node-key bst) (node-val bst)
-                                            (insert-into (node-left bst) key)
-                                            (node-right bst))]
-        [else
-         (make-node (node-key bst) (node-val bst)
-                    (node-left bst)
-                    (insert-into (node-right bst) key))]))
+;; BST -> Natural
+;; consume bst, produce total sum of the keys in the BST, tail-recursively 
+(check-expect (total-keys BSTF) 0)
+(check-expect (total-keys BST1) 1)
+(check-expect (total-keys BST2) (+ 2 3))
+(check-expect (total-keys BST0) (+ 0 1 2 3))
 
-;; BST -> (listof Natural)
-;; produce a pre-order traversal of the given bst
-(define (pre-order bst)
-  (cond [(false? bst) empty]
-        [else
-         (append (list (node-key bst))
-                 (pre-order (node-left bst))
-                 (pre-order (node-right bst)))]))
-
-;; BST -> (listof Natural)
-;; produce an in-order traversal of the given bst
-(define (in-order bst)
-  (cond [(false? bst) empty]
-        [else
-         (append (in-order (node-left bst))
-                 (list (node-key bst))
-                 (in-order (node-right bst)))]))
-
-;; BST -> (listof Natural)
-;; produce a post-order traversal of the given bst
-(define (post-order bst)
-  (cond [(false? bst) empty]
-        [else
-         (append (post-order (node-left bst))
-                 (post-order (node-right bst))
-                 (list (node-key bst)))]))                               
