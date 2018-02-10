@@ -1003,3 +1003,21 @@
                        (fn-for-lon (first lon) (rest lon) 1 (max curr longest))
                        (fn-for-lon (first lon) (rest lon) (add1 curr) longest))]))]
     (fn-for-lon (first lon0) (rest lon0) 1 1)))
+
+
+;; (listof Number) -> (listof Number)
+;; quicksort
+(check-expect (qsort empty) empty)
+(check-expect (qsort (list 1)) (list 1))
+(check-expect (qsort (list 1 2)) (list 1 2))
+(check-expect (qsort (list 5 4 3 2 1)) (list 1 2 3 4 5))
+(check-expect (qsort (list 1 1 2 2)) (list 1 1 2 2))
+
+; (define (qsort empty) empty) ; stub
+
+(define (qsort lon)
+  (cond [(empty? lon) empty]
+        [else
+         (append (qsort (filter (λ(n)(<= n (first lon))) (rest lon)))
+                 (list (first lon))
+                 (qsort (filter (λ(n)(> n (first lon))) (rest lon))))]))
